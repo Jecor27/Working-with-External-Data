@@ -10,6 +10,7 @@
   "dependencies": {
     "@popperjs/core": "2.11.7",
     "axios": "1.3.4",
+    "axios.js": "^3.6.2",
     "bootstrap": "5.2.3",
     "jquery": "3.6.4",
     "parcel-bundler": "^1.6.1"

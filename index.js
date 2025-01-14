@@ -102,7 +102,7 @@ async function handleBreedChange(e) {
       let element = Carousel.createCarouselItem(item.url, item.id);
       Carousel.appendCarousel(element);
 
-      console.log("hello");
+      //console.log("hello");
     });
     if (selectedBreed) {
       infoDump.innerHTML = `
