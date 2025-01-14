@@ -21,7 +21,7 @@ axios.defaults.headers.common["x-api-key"] = API_KEY;
 axios.interceptors.request.use((config) => {
     progressBar.style.width = "0%";
     document.body.style.cursor = "progress";
-    console.log("request begins: ", config);
+    console.log("request begins: -------------", config);
     return config;
 });
 
@@ -30,7 +30,7 @@ axios.interceptors.request.use((config) => {
 axios.interceptors.response.use(
     (response) => {
         document.body.style.cursor = "default";
-        console.log("returning: ", response)
+        console.log("returning: --------------", response)
         return response;
     },
     (error) => {
@@ -40,10 +40,10 @@ axios.interceptors.response.use(
 );
 
 function updateProgress(e) {
-    console.log("ProgressEvent:", e);
+    console.log("ProgressEvent:-----------------", e);
     if (e && e.lengthComputable) {
         const percentage = (e.loaded / e.total) * 100;
-        console.log("testing: ",progressBar.style.width = `${percentage}%`);
+        console.log("testing: ---------", progressBar.style.width = `${percentage}%`);
     }
 
 }
@@ -60,7 +60,7 @@ updateProgress();
 async function initialLoad() {
     const response = await axios.get("/breeds", {
         onDownloadProgress: updateProgress,
-      });
+    });
 
 
     const data = response.data;
@@ -104,7 +104,7 @@ async function handleBreedChange(e) {
     try {
         const response = await axios.get(`/images/search?limit=10&breed_ids=${breedId}`, {
             onDownloadProgress: updateProgress,
-          });
+        });
 
         const data = response.data;
         // console.log("breed data received:", data);
@@ -201,9 +201,51 @@ updateProgress(); */
  *   once or twice per request to this API. This is still a concept worth familiarizing yourself
  *   with for future projects.
  */
-
+/* getFavouritesBtn.addEventListener("click", favourite); */
 
 export async function favourite(imgId) {
-    // your code here
-}
+    try {
+        console.log("Attempting to favorite image with ID:", imgId);
+        const response = await axios.get('/favourites');
+        const favourites = response.data;
+        //found the favourites folder from the api and then grabbed it to get the existing 
+        //console.log('these are ex:', favourites)
 
+        const favouriteE = favourites.find((fav) => fav.image_id === imgId);
+
+        if (favouriteE) {
+            await axios.delete(`/favourites/${favouriteE.id}`);
+            console.log(`Image ${imgId} removed from favourites.`)
+        } else {
+            await axios.post(
+                '/favourites',
+                { image_id: imgId },
+                { headers: { "x-api-key": API_KEY } }
+              );
+            console.log(`Image ${imgId} added to favourites.`);
+        }
+    } catch (err) {
+        console.error("error with the images:------------", err)
+        console.log("Image ID:", imgId);
+    }
+}
+//console.log("APIkey: --------",axios.defaults.headers.common);
+
+
+async function getFavourites() {
+    const response = await axios.get('/favourites');
+    const favourites = response.data;
+    //found the favourites folder from the api and then grabbed it
+    console.log('these are ex:', favourites)
+
+    Carousel.clear();
+    //getting the carousel cleared
+
+    //need to add favourites to the carousel
+    favourites.forEach((favourite) => {
+        const element3 = Carousel.createCarouselItem(favourite.image.url, favourite.id);
+        Carousel.appendCarousel(element3);
+    })
+    Carousel.start();
+    console.log("Favourites loaded successfully.---------------");
+}

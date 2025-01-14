@@ -12451,6 +12451,10 @@ function createCarouselItem(imgSrc, imgAlt, imgId) {
   img.alt = imgAlt;
   var favBtn = clone.querySelector(".favourite-button");
   favBtn.addEventListener("click", function () {
+    if (!imgId) {
+      console.error("Image ID is undefined!");
+      return;
+    }
     (0, _index.favourite)(imgId);
   });
   return clone;
@@ -16025,22 +16029,22 @@ _axios.default.defaults.headers.common["x-api-key"] = API_KEY;
 _axios.default.interceptors.request.use(function (config) {
   progressBar.style.width = "0%";
   document.body.style.cursor = "progress";
-  console.log("request begins: ", config);
+  console.log("request begins: -------------", config);
   return config;
 });
 _axios.default.interceptors.response.use(function (response) {
   document.body.style.cursor = "default";
-  console.log("returning: ", response);
+  console.log("returning: --------------", response);
   return response;
 }, function (error) {
   document.body.style.cursor = "default";
   return Promise.reject(error);
 });
 function updateProgress(e) {
-  console.log("ProgressEvent:", e);
+  console.log("ProgressEvent:-----------------", e);
   if (e && e.lengthComputable) {
     var percentage = e.loaded / e.total * 100;
-    console.log("testing: ", progressBar.style.width = "".concat(percentage, "%"));
+    console.log("testing: ---------", progressBar.style.width = "".concat(percentage, "%"));
   }
 }
 updateProgress();
@@ -16161,6 +16165,7 @@ updateProgress(); */
  *   once or twice per request to this API. This is still a concept worth familiarizing yourself
  *   with for future projects.
  */
+/* getFavouritesBtn.addEventListener("click", favourite); */
 function _handleBreedChange() {
   _handleBreedChange = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(e) {
     var breedId, response, data, breedResponse, breeds, selectedBreed;
@@ -16214,18 +16219,93 @@ function _handleBreedChange() {
 }
 function favourite(_x2) {
   return _favourite.apply(this, arguments);
-}
+} //console.log("APIkey: --------",axios.defaults.headers.common);
 function _favourite() {
   _favourite = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(imgId) {
+    var response, favourites, favouriteE;
     return _regeneratorRuntime().wrap(function _callee3$(_context3) {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
+          _context3.prev = 0;
+          console.log("Attempting to favorite image with ID:", imgId);
+          _context3.next = 4;
+          return _axios.default.get('/favourites');
+        case 4:
+          response = _context3.sent;
+          favourites = response.data; //found the favourites folder from the api and then grabbed it to get the existing 
+          //console.log('these are ex:', favourites)
+          favouriteE = favourites.find(function (fav) {
+            return fav.image_id === imgId;
+          });
+          if (!favouriteE) {
+            _context3.next = 13;
+            break;
+          }
+          _context3.next = 10;
+          return _axios.default.delete("/favourites/".concat(favouriteE.id));
+        case 10:
+          console.log("Image ".concat(imgId, " removed from favourites."));
+          _context3.next = 16;
+          break;
+        case 13:
+          _context3.next = 15;
+          return _axios.default.post('/favourites', {
+            image_id: imgId
+          }, {
+            headers: {
+              "x-api-key": API_KEY
+            }
+          });
+        case 15:
+          console.log("Image ".concat(imgId, " added to favourites."));
+        case 16:
+          _context3.next = 22;
+          break;
+        case 18:
+          _context3.prev = 18;
+          _context3.t0 = _context3["catch"](0);
+          console.error("error with the images:------------", _context3.t0);
+          console.log("Image ID:", imgId);
+        case 22:
         case "end":
           return _context3.stop();
       }
-    }, _callee3);
+    }, _callee3, null, [[0, 18]]);
   }));
   return _favourite.apply(this, arguments);
+}
+function getFavourites() {
+  return _getFavourites.apply(this, arguments);
+}
+function _getFavourites() {
+  _getFavourites = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+    var response, favourites;
+    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+      while (1) switch (_context4.prev = _context4.next) {
+        case 0:
+          _context4.next = 2;
+          return _axios.default.get('/favourites');
+        case 2:
+          response = _context4.sent;
+          favourites = response.data; //found the favourites folder from the api and then grabbed it
+          console.log('these are ex:', favourites);
+          Carousel.clear();
+          //getting the carousel cleared
+
+          //need to add favourites to the carousel
+          favourites.forEach(function (favourite) {
+            var element3 = Carousel.createCarouselItem(favourite.image.url, favourite.id);
+            Carousel.appendCarousel(element3);
+          });
+          Carousel.start();
+          console.log("Favourites loaded successfully.---------------");
+        case 9:
+        case "end":
+          return _context4.stop();
+      }
+    }, _callee4);
+  }));
+  return _getFavourites.apply(this, arguments);
 }
 },{"./Carousel.js":"Carousel.js","axios.js":"node_modules/axios.js/index.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -16252,7 +16332,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55098" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64685" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
