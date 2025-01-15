@@ -10,8 +10,10 @@ const progressBar = document.getElementById("progressBar");
 const getFavouritesBtn = document.getElementById("getFavouritesBtn");
 
 // Step 0: Store your API key here for reference and easy access.
-const API_KEY =
-    "live_4bnjjkMy5puVe4S9xif2XieQlpGPXP7Bw0ZQ0qjdGt4PZWORHK5y41d8a9jtlous";
+// const API_KEY =
+//     "live_4bnjjkMy5puVe4S9xif2XieQlpGPXP7Bw0ZQ0qjdGt4PZWORHK5y41d8a9jtlous";
+
+const API_KEY = "live_dYfTfAwgGIGOEe7nNzvhyqItnG6HM2VTwWLwZQ1TDKyPtGh2MvaU8JOODPk8BbRm";
 
 
 
@@ -120,7 +122,7 @@ async function handleBreedChange(e) {
         infoDump.innerHTML = "";
 
         data.forEach((item) => {
-            let element = Carousel.createCarouselItem(item.url, item.id);
+            let element = Carousel.createCarouselItem(item.url, "cat image", item.id);
             Carousel.appendCarousel(element);
 
             //console.log("hello");
@@ -204,6 +206,7 @@ updateProgress(); */
 /* getFavouritesBtn.addEventListener("click", favourite); */
 
 export async function favourite(imgId) {
+
     try {
         console.log("Attempting to favorite image with ID:", imgId);
         const response = await axios.get('/favourites');
@@ -243,7 +246,7 @@ async function getFavourites() {
 
     //need to add favourites to the carousel
     favourites.forEach((favourite) => {
-        const element3 = Carousel.createCarouselItem(favourite.image.url, favourite.id);
+        const element3 = Carousel.createCarouselItem(favourite.image.url, "alt" ,favourite.id);
         Carousel.appendCarousel(element3);
     })
     Carousel.start();

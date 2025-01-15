@@ -1,5 +1,7 @@
 import * as bootstrap from "bootstrap";
-import { favourite } from "./index.js";
+// import { favourite } from "./index.js";
+import { favourite } from "./axios.js";
+
 
 export function createCarouselItem(imgSrc, imgAlt, imgId) {
   const template = document.querySelector("#carouselItemTemplate");
@@ -11,10 +13,6 @@ export function createCarouselItem(imgSrc, imgAlt, imgId) {
 
   const favBtn = clone.querySelector(".favourite-button");
     favBtn.addEventListener("click", () => {
-        if (!imgId) {
-            console.error("Image ID is undefined!");
-            return;
-        }
         favourite(imgId);
     });
 
